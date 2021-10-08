@@ -11,7 +11,8 @@ public class Idea {
     private Long id;
     @Column
     private String title;
-    @Column
+
+    @Column(columnDefinition = "text")
     private String text;
 
     public Idea(){
