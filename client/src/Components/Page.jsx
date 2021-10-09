@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import IdeaServices from "../Services/IdeaServices";
 import {
   Button,
-  ButtonGroup,
   Stack,
   Grid,
   Typography,
@@ -13,6 +12,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EditIcon from "@mui/icons-material/Edit";
 
 function Page() {
   // This hook array will hold the ideas in the database
@@ -90,25 +91,28 @@ function Page() {
           {/* Need to make it so that clicking on the button displays text */}
           {allIdeas.map((item, i) => {
             return (
-              <Grid container>
+              <Grid container key={i}>
                 <Grid item xs={8}>
                   <Button
+                    color="inherit"
                     fullWidth={true}
                     key={i}
                     id={item.id}
                     title={item.title}
                     text={item.text}
                     onClick={() => {
-                      setCurrentIdeaTitle(item.title);
-                      setCurrentIdeaText(item.text);
+                      displayIdea(item.title, item.text);
                     }}
                   >
                     {item.title}
                   </Button>
                 </Grid>
                 <Grid item xs={4}>
+                  <Button color="inherit">
+                    <EditIcon />
+                  </Button>
                   <Button
-                    endIcon
+                    color="error"
                     onClick={() => {
                       deleteIdea(item.id);
                     }}
@@ -119,10 +123,14 @@ function Page() {
               </Grid>
             );
           })}
+          
         </Stack>
         {/* This button displays an input area where the user can create their idea entry */}
-        <Button onClick={handleClickOpen}>Add</Button>
+        <Button color="info" onClick={handleClickOpen}>
+          <AddCircleIcon />
+        </Button>
       </Grid>
+
       {/* This will be the space where the idea title and text display when the button is clicked */}
       <Grid item xs={8} textAlign="center">
         <Typography variant="h2" mb={4}>
