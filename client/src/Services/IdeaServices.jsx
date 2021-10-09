@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const IDEA_URL = "http://localhost:8080/idea"
+const IDEA_URL = "http://localhost:8080/idea/"
 
 class IdeaService {
     getIdea = () =>{

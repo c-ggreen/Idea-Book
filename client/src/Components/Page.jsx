@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import IdeaServices from "../Services/IdeaServices";
 import {
   Button,
+  ButtonGroup,
   Stack,
   Grid,
   Typography,
@@ -11,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function Page() {
   // This hook array will hold the ideas in the database
@@ -43,12 +45,20 @@ function Page() {
     });
   };
 
-  const handleNewTitle = (e) =>{
+  const handleNewTitle = (e) => {
     setNewTitle(e.target.value);
-  }
-  const handleNewText = (e) =>{
-    setNewText(e.target.value)
-  }
+  };
+  const handleNewText = (e) => {
+    setNewText(e.target.value);
+  };
+
+  // Function to make DELETE API request
+  const deleteIdea = (id) => {
+    IdeaServices.deleteIdea(id).then((res) => {
+      console.log(res.data);
+      getIdeas();
+    });
+  };
 
   // Function that will display the current Idea on button click
   // For some reason when I use this it causes a multiple render issue
@@ -74,24 +84,39 @@ function Page() {
 
   return (
     <Grid container height="100vh">
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <Stack spacing={2} height="90%">
           {/* Displays the titles each idea item as a button */}
           {/* Need to make it so that clicking on the button displays text */}
           {allIdeas.map((item, i) => {
             return (
-              <Button
-                key={i}
-                id={item.id}
-                title={item.title}
-                text={item.text}
-                onClick={() => {
-                  setCurrentIdeaTitle(item.title);
-                  setCurrentIdeaText(item.text);
-                }}
-              >
-                {item.title}
-              </Button>
+              <Grid container>
+                <Grid item xs={8}>
+                  <Button
+                    fullWidth={true}
+                    key={i}
+                    id={item.id}
+                    title={item.title}
+                    text={item.text}
+                    onClick={() => {
+                      setCurrentIdeaTitle(item.title);
+                      setCurrentIdeaText(item.text);
+                    }}
+                  >
+                    {item.title}
+                  </Button>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    endIcon
+                    onClick={() => {
+                      deleteIdea(item.id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Grid>
+              </Grid>
             );
           })}
         </Stack>
@@ -99,7 +124,7 @@ function Page() {
         <Button onClick={handleClickOpen}>Add</Button>
       </Grid>
       {/* This will be the space where the idea title and text display when the button is clicked */}
-      <Grid item xs={9} textAlign="center">
+      <Grid item xs={8} textAlign="center">
         <Typography variant="h2" mb={4}>
           {currentIdeaTitle}
         </Typography>
