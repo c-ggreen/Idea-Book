@@ -56,6 +56,8 @@ function Page() {
   // Function to make DELETE API request
   const deleteIdea = (id) => {
     IdeaServices.deleteIdea(id).then((res) => {
+      setCurrentIdeaTitle("");
+      setCurrentIdeaText("");
       console.log(res.data);
       getIdeas();
     });
@@ -132,7 +134,7 @@ function Page() {
       </Grid>
 
       {/* This will be the space where the idea title and text display when the button is clicked */}
-      <Grid item xs={8} textAlign="center">
+      <Grid item xs={7} textAlign="center">
         <Typography variant="h2" mb={4}>
           {currentIdeaTitle}
         </Typography>
