@@ -88,7 +88,8 @@ function Page() {
   return (
     <Grid container height="100vh">
       <Grid item xs={4}>
-        <Stack spacing={2} height="90%">
+        <Stack spacing={2} height="90%" alignItems="center">
+          <Typography variant="h5">Idea Book</Typography>
           {/* Displays the titles each idea item as a button */}
           {/* Need to make it so that clicking on the button displays text */}
           {allIdeas.map((item, i) => {
