@@ -32,7 +32,7 @@ function Page() {
   };
 
   // Function and Hooks to make POST API request
-  // onClick of the add button a Modal or Text Area needs to appear where the user can add their inputs
+  // onClick of the add button a Dialog Modal appears where the user can add their inputs
   const [newTitle, setNewTitle] = useState("");
   const [newText, setNewText] = useState("");
   const submitIdea = () => {
@@ -43,9 +43,11 @@ function Page() {
       handleClose();
       console.log(res.data);
       getIdeas();
+      displayIdea(newTitle, newText);
     });
   };
 
+  // Handlers for the input values entered into the Dialog Model when making a new post
   const handleNewTitle = (e) => {
     setNewTitle(e.target.value);
   };
@@ -53,9 +55,44 @@ function Page() {
     setNewText(e.target.value);
   };
 
+  // Function and Hooks to make PATCH API request
+  const [editTitle, setEditTitle] = useState("");
+  const [editText, setEditText] = useState("");
+  // Takes in item ID as an identifier when edit button is clicked
+  const [editId, setEditId] = useState("");
+  const editIdea = () => {
+    IdeaServices.patchIdea({
+      id: editId,
+      title: editTitle,
+      text: editText,
+    }).then((res) => {
+      handleCloseEdit();
+      console.log(res.data);
+      getIdeas();
+      displayIdea(editTitle, editText);
+    });
+  };
+
+  // Handlers for the input values entered into the Dialog Model when making an EDIT
+  const handleTitleEdit = (e) => {
+    setEditTitle(e.target.value);
+  };
+  const handleTextEdit = (e) => {
+    setEditText(e.target.value);
+  };
+
+  // Will hold the default values of the EDIT dialog modal when edit button is clicked so the text and title of the post selected appears in input fields
+  const [defaultTitle, setDefaultTitle] = useState("");
+  const [defaultText, setDefaultText] = useState("");
+  const defaultValue = (title, text) => {
+    setDefaultTitle(title);
+    setDefaultText(text);
+  };
+
   // Function to make DELETE API request
   const deleteIdea = (id) => {
     IdeaServices.deleteIdea(id).then((res) => {
+      // This clears the screen on the right side as to show the delete effect.
       setCurrentIdeaTitle("");
       setCurrentIdeaText("");
       console.log(res.data);
@@ -64,8 +101,6 @@ function Page() {
   };
 
   // Function that will display the current Idea on button click
-  // For some reason when I use this it causes a multiple render issue
-  // So I'm setting the values directly in the onClick function in the Button
   const displayIdea = (title, text) => {
     setCurrentIdeaTitle(title);
     setCurrentIdeaText(text);
@@ -76,7 +111,7 @@ function Page() {
     getIdeas();
   }, []);
 
-  // Handles the Dialog modal that appears onscreen for post creation
+  // Handles the Dialog modal that appears onscreen for POST creation
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,14 +119,22 @@ function Page() {
   const handleClose = () => {
     setOpen(false);
   };
+  // Handles the Dialog modal that appears onscreen for PATCH creation
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleClickOpenEdit = () => {
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
 
   return (
     <Grid container height="100vh">
       <Grid item xs={4}>
         <Stack spacing={2} height="90%" alignItems="center">
           <Typography variant="h5">Idea Book</Typography>
-          {/* Displays the titles each idea item as a button */}
-          {/* Need to make it so that clicking on the button displays text */}
+          {/* Displays the title of each idea item as a button */}
+          {/* Also contains the Edit and Delete buttons for each post */}
           {allIdeas.map((item, i) => {
             return (
               <Grid container key={i}>
@@ -111,7 +154,14 @@ function Page() {
                   </Button>
                 </Grid>
                 <Grid item xs={4}>
-                  <Button color="inherit">
+                  <Button
+                    color="inherit"
+                    onClick={() => {
+                      setEditId(item.id);
+                      defaultValue(item.title, item.text);
+                      handleClickOpenEdit();
+                    }}
+                  >
                     <EditIcon />
                   </Button>
                   <Button
@@ -126,15 +176,14 @@ function Page() {
               </Grid>
             );
           })}
-          
         </Stack>
-        {/* This button displays an input area where the user can create their idea entry */}
+        {/* This button displays Dialog Modal where the user can create their idea entry */}
         <Button color="info" onClick={handleClickOpen}>
           <AddCircleIcon />
         </Button>
       </Grid>
 
-      {/* This will be the space where the idea title and text display when the button is clicked */}
+      {/* This will be the space where the idea title and text display when the corresponding button is clicked */}
       <Grid item xs={7} textAlign="center">
         <Typography variant="h2" mb={4}>
           {currentIdeaTitle}
@@ -142,6 +191,7 @@ function Page() {
         <Typography variant="body1">{currentIdeaText}</Typography>
       </Grid>
 
+      {/* The Dialog Modal that will handle new posts */}
       <Dialog fullWidth={true} maxWidth="md" open={open} onClose={handleClose}>
         <DialogTitle>New Post</DialogTitle>
         <DialogContent>
@@ -168,6 +218,44 @@ function Page() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={submitIdea}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* The Dialog Modal that will handle EDIT posts */}
+      {/* When modal appears it should already have text in the input fields */}
+      <Dialog
+        fullWidth={true}
+        maxWidth="md"
+        open={openEdit}
+        onClose={handleCloseEdit}
+      >
+        <DialogTitle>Edit Post</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Title"
+            type="text"
+            fullWidth
+            variant="standard"
+            defaultValue={defaultTitle}
+            onChange={handleTitleEdit}
+          />
+          <TextField
+            fullWidth
+            id="outlined-multiline-static"
+            label="Text"
+            multiline
+            rows={12}
+            margin="normal"
+            defaultValue={defaultText}
+            onChange={handleTextEdit}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEdit}>Cancel</Button>
+          <Button onClick={editIdea}>Submit</Button>
         </DialogActions>
       </Dialog>
     </Grid>
