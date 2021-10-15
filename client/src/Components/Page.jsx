@@ -158,6 +158,12 @@ function Page() {
                     color="inherit"
                     onClick={() => {
                       setEditId(item.id);
+                      // Setting the Edit title and text here fixes a bug that would occur when edits weren't made to both the title and text
+                      // New posts were most affected because making an edit to one of them without changing both fields would result in one of the fields reverting to a previous posts title
+                      // This is because the state of the editTitle and editText values will only update when the text in the inputs when they are CHANGED, not just because they load up
+                      // Therefore, the state of those variables needs to be updated whenever the Edit button is clicked
+                      setEditTitle(item.title);
+                      setEditText(item.text);
                       defaultValue(item.title, item.text);
                       handleClickOpenEdit();
                     }}
