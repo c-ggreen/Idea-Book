@@ -131,8 +131,9 @@ function Page() {
   return (
     <Grid container height="100vh">
       <Grid item xs={4}>
-        <Stack spacing={2} height="90%" alignItems="center">
+        <Stack spacing={1} height="90%" alignItems="center">
           <Typography variant="h5">Idea Book</Typography>
+          <Typography variant="caption">By Chadwick Green &copy;</Typography>
           {/* Displays the title of each idea item as a button */}
           {/* Also contains the Edit and Delete buttons for each post */}
           {allIdeas.map((item, i) => {
