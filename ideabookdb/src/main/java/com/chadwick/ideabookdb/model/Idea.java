@@ -1,6 +1,7 @@
 package com.chadwick.ideabookdb.model;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Idea")
@@ -11,9 +12,13 @@ public class Idea {
     private Long id;
     @Column
     private String title;
-
     @Column(columnDefinition = "text")
     private String text;
+    @Column
+    private boolean isActive = true;
+    @Column
+    @JsonFormat(pattern = "MMM dd yyyy hh:mm a")
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     public Idea(){
 
@@ -42,4 +47,21 @@ public class Idea {
     public void setText(String text) {
         this.text = text;
     }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 }
+
