@@ -1,11 +1,16 @@
 package com.chadwick.ideabookdb.model;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Idea")
-public class Idea {
+public class Idea implements Serializable {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +22,18 @@ public class Idea {
     @Column
     private boolean isActive = true;
     @Column
-    @JsonFormat(pattern = "MMM dd yyyy hh:mm a")
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private String timestamp;
 
-    public Idea(){
+//    @Column
+//    @CreationTimestamp
+//    private LocalDateTime timestamp;
+//    @Column
+//    @UpdateTimestamp
+//    private LocalDateTime updatedTimestamp;
+
+    //    @JsonFormat(pattern = "MMM dd yyyy hh:mm a")
+//    private LocalDateTime timestamp = LocalDateTime.now();
+    public Idea() {
 
     }
 
@@ -56,12 +69,20 @@ public class Idea {
         isActive = active;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    //    public LocalDateTime getUpdatedTimestamp() {
+//        return updatedTimestamp;
+//    }
+//
+//    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
+//        this.updatedTimestamp = updatedTimestamp;
+//    }
 }
 

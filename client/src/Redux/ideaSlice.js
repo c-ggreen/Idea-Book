@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import IdeaServices from "../Services/IdeaServices";
 import IdeaService from "../Services/IdeaServices";
  
 export const getIdeasAsync = createAsyncThunk(
   "ideas/getIdeasAsync",
   async () => {
-    const { data } = await IdeaService.getIdea("http://localhost:8080/idea/");
+    const { data } = await IdeaService.getIdea();
     console.log(data);
     return data;
   }
@@ -37,7 +38,11 @@ export const deleteIdeasAsync = createAsyncThunk(
 const ideaSlice = createSlice({
   name: "ideas",
   initialState: [],
-  reducers: {},
+  reducers: {
+    getIdeas:(state) =>{
+      return state = IdeaServices.getIdea()
+    }
+  },
   extraReducers: {
     [getIdeasAsync.fulfilled]: (state, action) => {
       return action.payload;
@@ -54,6 +59,7 @@ const ideaSlice = createSlice({
   },
 });
  
+export const {getIdeas} = ideaSlice.actions
 export default ideaSlice.reducer;
  
 

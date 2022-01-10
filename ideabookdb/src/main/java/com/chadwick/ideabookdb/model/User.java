@@ -1,19 +1,18 @@
 package com.chadwick.ideabookdb.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.ArrayList;
+import javax.persistence.*;
+
+import java.util.List;
 
 @Entity
-@Table(name = "User")
+@Table(name = "users")
 public class User {
     @Id
     @Column
     private String email;
-    @Column
-    private ArrayList<Idea> ideas = new ArrayList<Idea>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Idea> ideas;
 
     public User() {
     }
@@ -26,12 +25,14 @@ public class User {
         this.email = email;
     }
 
-    public ArrayList<Idea> getIdeas() {
+    public List<Idea> getIdeas() {
         return ideas;
     }
 
-    public void setIdeas(ArrayList<Idea> ideas) {
+    public void setIdeas(List<Idea> ideas) {
         this.ideas = ideas;
     }
+
+
 }
 

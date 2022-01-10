@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { getIdeasAsync, editIdeasAsync } from "../Redux/ideaSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { makeCurrentTitle, makeCurrentText } from "../Redux/generalSlice";
+import { makeCurrentTitle, makeCurrentText, makeCurrentTimestamp } from "../Redux/generalSlice";
 import {
   toggleEditModal,
   makeEditTitle,
@@ -24,6 +24,7 @@ function EditPostModal(props) {
   const id = useSelector((state) => state.modal.edit.id);
   const defaultTitle = useSelector((state) => state.general.default.title);
   const defaultText = useSelector((state) => state.general.default.text);
+  const timestamp = new Date().toLocaleString()
  
   const handleEditToggle = () => {
     dispatch(toggleEditModal());
@@ -36,11 +37,12 @@ function EditPostModal(props) {
           id: id,
           title: title,
           text: text,
+          timestamp:timestamp
         })
       ).then(() => {
         handleEditToggle();
+        displayIdea(title, text, timestamp);
         dispatch(getIdeasAsync());
-        displayIdea(title, text);
       });
     } catch (error) {
       if (error.response) {
@@ -64,9 +66,10 @@ function EditPostModal(props) {
     dispatch(makeEditText(e.target.value));
   };
  
-  const displayIdea = (title, text) => {
+  const displayIdea = (title, text, timestamp) => {
     dispatch(makeCurrentTitle(title));
     dispatch(makeCurrentText(text));
+    dispatch(makeCurrentTimestamp(timestamp));
   };
  
   return (

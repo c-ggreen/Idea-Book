@@ -22,8 +22,8 @@ function NewPostModal(props) {
   const modalStatus = useSelector((state) => state.modal.new.status);
   const title = useSelector((state) => state.modal.new.title);
   const text = useSelector((state) => state.modal.new.text);
-  const timestamp = useSelector((state) => state.general.current.timestamp)
- 
+  // const timestamp = useSelector((state) => state.general.current.timestamp)
+  const timestamp = new Date().toLocaleString()
  
   const handleNewToggle = () => {
     dispatch(toggleNewModal());
@@ -35,11 +35,12 @@ function NewPostModal(props) {
         addIdeasAsync({
           title: title,
           text: text,
+          timestamp:timestamp
         })
       ).then(() => {
         handleNewToggle();
-        dispatch(getIdeasAsync());
         displayIdea(title, text, timestamp);
+        dispatch(getIdeasAsync());
       });
     } catch (error) {
       if (error.response) {
