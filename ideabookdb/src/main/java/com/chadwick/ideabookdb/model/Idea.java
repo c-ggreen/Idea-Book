@@ -24,15 +24,7 @@ public class Idea implements Serializable {
     @Column
     private String timestamp;
 
-//    @Column
-//    @CreationTimestamp
-//    private LocalDateTime timestamp;
-//    @Column
-//    @UpdateTimestamp
-//    private LocalDateTime updatedTimestamp;
 
-    //    @JsonFormat(pattern = "MMM dd yyyy hh:mm a")
-//    private LocalDateTime timestamp = LocalDateTime.now();
     public Idea() {
 
     }
@@ -77,12 +69,6 @@ public class Idea implements Serializable {
         this.timestamp = timestamp;
     }
 
-    //    public LocalDateTime getUpdatedTimestamp() {
-//        return updatedTimestamp;
-//    }
-//
-//    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
-//        this.updatedTimestamp = updatedTimestamp;
-//    }
+
 }
 

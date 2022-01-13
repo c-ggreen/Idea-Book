@@ -1,21 +1,15 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
-import { useDispatch, useSelector } from "react-redux";
-import { makeUserEmail } from "../Redux/userSlice";
- 
+
 function Signup(props) {
-  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const thisUser = useSelector((state) => state.user.email);
- 
+
+
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -25,30 +19,35 @@ function Signup(props) {
   const handlePasswordConfirm = (e) => {
     setPasswordConfirm(e.target.value);
   };
- 
-  onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser) {
-      dispatch(makeUserEmail(currentUser.email));
-    }
-  });
- 
-  const registerUser = async () => {
-    try {
-      if (password !== passwordConfirm) {
-        return alert("Passwords do not match.");
-      } else {
-        const user = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        console.log(user);
-      }
-    } catch (e) {
-      console.log(e.message);
+
+  // onAuthStateChanged(auth, (currentUser) => {
+  //   if (currentUser) {
+  //     dispatch(makeUserEmail(currentUser.email));
+  //   }
+  // });
+
+  const registerUser = () => {
+    if (password !== passwordConfirm) {
+      return alert("Passwords do not match.");
+    } else if (password.length < 6 || passwordConfirm.length < 6) {
+      return alert("Password must be at least 6 characters.");
+    } else {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+          alert("Success");
+        })
+        .catch((err) => {
+          if(err.code === "auth/email-already-in-use"){
+            alert("Email already in use.")
+          }
+          console.error(err.code);
+          console.error(err.message);
+        });
     }
   };
- 
+
   return (
     <Grid
       container
@@ -91,23 +90,22 @@ function Signup(props) {
           spacing={2}
         >
           <Link to="/" className="link">
-            <Button
-              variant="contained"
-              onClick={() => {
-                registerUser().then(() => {
-                  return alert("Success!");
-                });
-              }}
-            >
-              Sign Up
+            <Button variant="contained">
+             Back to Log In
             </Button>
           </Link>
+          <Button
+            variant="contained"
+            onClick={() => {
+              registerUser();
+            }}
+          >
+            Register
+          </Button>
         </Stack>
       </Grid>
     </Grid>
   );
 }
- 
-export default Signup;
- 
 
+export default Signup;

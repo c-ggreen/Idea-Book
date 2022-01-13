@@ -6,6 +6,9 @@ class UserService {
     getUser = () =>{
        return axios.get(URL)
     };
+    getUserById = (id) =>{
+        return axios.get(URL + id)
+    }
     postUser = (object) =>{
         return axios.post(URL, object)
     };

@@ -38,24 +38,24 @@ import {
   makeDefaultTitle,
   makeDefaultText,
 } from "../Redux/generalSlice";
-import { makeUserEmail } from "../Redux/userSlice";
+import { makeUserEmail, makeLoggedIn } from "../Redux/userSlice";
 import { auth } from "../firebase-config";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
  
 function Panel(props) {
   const dispatch = useDispatch();
   const allIdeas = useSelector((state) => state.ideas);
   const currentUser = useSelector((state) => state.user.email);
- 
-  onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser) {
-      dispatch(makeUserEmail(currentUser.email));
-    }
-  });
-  const logOut = async () => {
-    await signOut(auth);
-    dispatch(makeUserEmail(""));
-  };
+  const userInfo = useSelector((state) => state.user.userInfo)
+// console.log("THIS IS THE USER INFO" + userInfo.email + userInfo.ideas);
+
+  const signOut = () =>{
+    auth.signOut().then(()=>{
+      dispatch(makeUserEmail(""));
+      dispatch(makeLoggedIn(false))
+      alert("User signed out")
+    })
+  }
  
   const setEdit = (id, title, text, timestamp) => {
     dispatch(makeEditId(id));
@@ -89,13 +89,14 @@ function Panel(props) {
   const handleSwitch = (e) => {
     setDeletedSwitch(e.target.checked);
   };
-  const softDeleteIdea = (id, title, text) => {
+  const softDeleteIdea = (id, title, text, timestamp) => {
     try {
       dispatch(
         editIdeasAsync({
           id: id,
           title: title,
           text: text,
+          timestamp: timestamp,
           active: false,
         })
       ).then(() => {
@@ -118,13 +119,14 @@ function Panel(props) {
       console.log(error.config);
     }
   };
-  const undoDelete = (id, title, text) => {
+  const undoDelete = (id, title, text, timestamp) => {
     try {
       dispatch(
         editIdeasAsync({
           id: id,
           title: title,
           text: text,
+          timestamp: timestamp,
           active: true,
         })
       ).then(() => {
@@ -178,6 +180,8 @@ function Panel(props) {
     setSearch(e.target.value.toLowerCase());
   };
  
+
+
   return (
     <Grid item xs={4}>
       <Stack spacing={1} height="90%" alignItems="center">
@@ -194,7 +198,7 @@ function Panel(props) {
           size="small"
           onChange={handleSearch}
         />
-        {/* Conditional that displays recently deleted items when the switch is on */}
+        {/* Conditional that displays Recently Deleted title when the switch is on */}
         {deletedSwitch && (
           <Typography variant="h6" color="red">
             RECENTLY DELETED
@@ -202,7 +206,7 @@ function Panel(props) {
         )}
         {/* Displays the title of each idea item as a button */}
         {/* Also contains the Edit and Delete buttons for each post */}
-        {allIdeas.map((item, i) => {
+        {allIdeas?.map((item, i) => {
           // Conditional that only renders items that have been marked for deletion when switch is on
           if (!item.active && deletedSwitch) {
             return (
@@ -237,7 +241,7 @@ function Panel(props) {
                     <Button
                       color="inherit"
                       onClick={() => {
-                        undoDelete(item.id, item.title, item.text);
+                        undoDelete(item.id, item.title, item.text, item.timestamp);
                       }}
                     >
                       <UndoIcon />
@@ -307,7 +311,7 @@ function Panel(props) {
                     <Button
                       color="error"
                       onClick={() => {
-                        softDeleteIdea(item.id, item.title, item.text);
+                        softDeleteIdea(item.id, item.title, item.text, item.timestamp);
                       }}
                     >
                       <CancelIcon />
@@ -342,7 +346,7 @@ function Panel(props) {
         />
         <Tooltip title="Log Out">
           <Link to="/">
-            <Button color="error" onClick={() => logOut()}>
+            <Button color="error" onClick={() => signOut()}>
               <LogoutIcon />
             </Button>
           </Link>
